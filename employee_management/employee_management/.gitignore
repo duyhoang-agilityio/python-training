@@ -1,0 +1,67 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django stuff
+db.sqlite3
+*.sqlite3
+*.log
+*.pot
+*.pyc
+migrations/
+
+# Media and static files
+/media
+/static
+*.svg
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
+# IDE specific
+.idea/
+.vscode/
+*.swp
+*.swo
+*.DS_Store
+
+# Packages
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+*.tar.gz
+*.zip
+*.whl
+
+# Celery stuff
+celerybeat-schedule
+
+# Testing
+coverage/
+nosetests.xml
+*.cover
+.hypothesis/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+
+# Pyre
+.pyre/
