@@ -80,11 +80,11 @@ Visit `http://127.0.0.1:8000` in your browser to access the app.
 
 ## **Configuration**
 
-### **Deployment (Gunicorn + Nginx)**
+### **Deployment Gunicorn**
 
 1. **Install Gunicorn**
    ```bash
-   pip install gunicorn
+   python -m pip install gunicorn
    ```
 
 2. **Run Gunicorn**
@@ -107,4 +107,4 @@ python manage.py test
 - Custom management commands for automating tasks.
 - QuerySet filters and aggregations for advanced querying.
 - Separate settings for development, testing, and production.
-- Deployment ready with Gunicorn and Nginx.
+- Deployment ready with Gunicorn.
