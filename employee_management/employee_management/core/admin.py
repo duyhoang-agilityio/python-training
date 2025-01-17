@@ -5,7 +5,7 @@ from .models import Department, Contact, Employee, Project, ProjectAssignment
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ("full_name", "age", "status", "department")
-    search_fields = ("first_name", "last_name", "email")
+    search_fields = ("first_name", "last_name")
     list_filter = ("department",)
 
 
