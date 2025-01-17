@@ -42,6 +42,11 @@ class Employee(models.Model):
         ("Active", "Active"),
         ("Inactive", "Inactive"),
     ]
+    ROLE_CHOICES = [
+        ("Admin", "Admin"),
+        ("Manager", "Manager"),
+        ("Employee", "Employee"),
+    ]
 
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -51,6 +56,8 @@ class Employee(models.Model):
     department = models.ForeignKey(
         Department, related_name="employees", on_delete=models.SET_NULL, null=True
     )
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES, default="Employee")
+
     objects = EmployeeManager.from_queryset(EmployeeQuerySet)()
 
     @property
@@ -81,8 +88,15 @@ class ProjectAssignment(models.Model):
 @receiver(post_save, sender=Project)
 def add_high_role_members(sender, instance, created, **kwargs):
     if created:
-        high_role_employees = Employee.objects.filter(status="Active")[:3]
+        highest_role = "Admin"
+
+        # Get active employees with the highest role
+        high_role_employees = Employee.objects.filter(
+            status="Active", role=highest_role
+        )
+
+        # Add these employees to the project
         for employee in high_role_employees:
             ProjectAssignment.objects.create(
-                employee=employee, project=instance, role="High Role"
+                employee=employee, project=instance, role=highest_role
             )
