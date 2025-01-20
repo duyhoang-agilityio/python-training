@@ -1,4 +1,4 @@
-# employee_management/settings/base.py
+# employee/settings/base.py
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -25,7 +25,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "employee_management.urls"
+ROOT_URLCONF = "employee.urls"
 
 TEMPLATES = [
     {
@@ -43,7 +43,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "employee_management.wsgi.application"
+WSGI_APPLICATION = "employee.wsgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

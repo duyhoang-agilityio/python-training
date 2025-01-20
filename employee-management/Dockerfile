@@ -16,4 +16,4 @@ RUN pip install -r requirements.txt
 COPY . /code/
 
 # Use Gunicorn to serve the application
-CMD ["gunicorn", "employee_management.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "employee-management.wsgi:application", "--bind", "0.0.0.0:8000"]

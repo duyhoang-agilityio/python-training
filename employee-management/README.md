@@ -39,7 +39,7 @@ employee_management/
 ### 1. **Clone the Repository**
 ```bash
 git clone git@gitlab.asoft-python.com:duy.hoang/python_training.git
-cd employee_management
+cd employee-management
 ```
 
 ### 2. **Set Up a Virtual Environment**
@@ -89,7 +89,7 @@ Visit `http://127.0.0.1:8000` in your browser to access the app.
 
 2. **Run Gunicorn**
    ```bash
-   gunicorn --bind 0.0.0.0:8000 employee_management.wsgi:application
+   gunicorn --bind 0.0.0.0:8000 employee-management.wsgi:application
    ```
 
 ---
