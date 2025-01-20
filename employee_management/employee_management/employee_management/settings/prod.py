@@ -2,7 +2,7 @@ import os
 from .base import *
 
 DEBUG = False
-ALLOWED_HOSTS = ["your-production-domain.com"]
+ALLOWED_HOSTS = ["domain.com"]
 
 DATABASES = {
     "default": {
@@ -14,7 +14,3 @@ DATABASES = {
         "PORT": "5432",
     }
 }
-
-
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
