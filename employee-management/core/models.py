@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.db.models import Manager, QuerySet
 
 
@@ -8,9 +6,12 @@ class EmployeeQuerySet(QuerySet):
     """
     Custom queryset for the Employee model to add reusable filtering logic.
     """
-    def active(self):
+    def active(self) -> QuerySet["Employee"]:
         """
-        Filters employees with 'Active' status.
+        Filters employees with status set to 'Active'.
+
+        Returns:
+            QuerySet: A queryset of active employees.
         """
         return self.filter(status="Active")
 
@@ -19,9 +20,12 @@ class EmployeeManager(Manager):
     """
     Custom manager for the Employee model to provide additional query methods.
     """
-    def aged_over_25(self):
+    def aged_over_25(self) -> QuerySet["Employee"]:
         """
-        Filters employees who are older than 25 years.
+        Filters employees who are older than 25.
+
+        Returns:
+            QuerySet: A queryset of employees aged over 25.
         """
         return self.filter(age__gt=25)
 
@@ -30,9 +34,9 @@ class Department(models.Model):
     """
     Represents a department in the organization.
     """
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, help_text="Name of the department.",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -41,11 +45,11 @@ class Contact(models.Model):
     Stores contact details associated with an employee.
     """
     employee = models.ForeignKey(
-        "Employee", related_name="contacts", on_delete=models.CASCADE
+        "Employee", related_name="contacts", on_delete=models.CASCADE,help_text="The employee associated with this contact.",
     )
-    address = models.TextField()
+    address = models.TextField(help_text="The contact address of the employee.")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Contact for {self.employee}"
 
 
@@ -63,26 +67,36 @@ class Employee(models.Model):
         ("Employee", "Employee"),
     ]
 
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    age = models.PositiveIntegerField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
-    salary = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    department = models.ForeignKey(
-        Department, related_name="employees", on_delete=models.SET_NULL, null=True
+    first_name = models.CharField(max_length=50, help_text="The first name of the employee.",)
+    last_name = models.CharField(max_length=50, help_text="The last name of the employee.")
+    age = models.PositiveIntegerField(help_text="The age of the employee.")
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, help_text="The employment status of the employee."
     )
-    role = models.CharField(max_length=50, choices=ROLE_CHOICES, default="Employee")
+    salary = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, help_text="The salary of the employee."
+    )
+    department = models.ForeignKey(
+        Department,
+        related_name="employees",
+        on_delete=models.SET_NULL,
+        null=True,
+        help_text="The department where the employee works.",
+    )
+    role = models.CharField(
+        max_length=50, choices=ROLE_CHOICES, default="Employee", help_text="The role of the employee."
+    )
 
     objects = EmployeeManager.from_queryset(EmployeeQuerySet)()
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         """
         Returns the full name of the employee by combining first and last names.
         """
         return f"{self.first_name} {self.last_name}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.full_name
 
 
@@ -90,10 +104,10 @@ class Project(models.Model):
     """
     Represents a project in the organization.
     """
-    name = models.CharField(max_length=100)
-    description = models.TextField()
+    name = models.CharField(max_length=100, help_text="The name of the project.")
+    description = models.TextField(help_text="The description of the project.")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -101,35 +115,20 @@ class ProjectAssignment(models.Model):
     """
     Links an employee to a project with a specific role.
     """
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    role = models.CharField(max_length=100)
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        help_text="The employee assigned to the project.",
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        help_text="The project to which the employee is assigned.",
+    )
+    role = models.CharField(max_length=100, help_text="The role of the employee in the project.")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.employee.full_name} -> {self.project.name}"
 
 
-@receiver(post_save, sender=Project)
-def add_high_role_members(sender, instance, created, **kwargs):
-    """
-    Signal handler that assigns 'Admin' employees to a newly created project.
 
-    Args:
-        sender (Model): The model class sending the signal.
-        instance (Project): The project instance being saved.
-        created (bool): Whether the project was created (True) or updated (False).
-        **kwargs: Additional keyword arguments.
-    """
-    if created:
-        highest_role = "Admin"
-
-        # Get active employees with the highest role
-        high_role_employees = Employee.objects.filter(
-            status="Active", role=highest_role
-        )
-
-        # Add these employees to the project
-        for employee in high_role_employees:
-            ProjectAssignment.objects.create(
-                employee=employee, project=instance, role=highest_role
-            )
