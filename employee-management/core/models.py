@@ -5,22 +5,31 @@ from django.db.models import Manager, QuerySet
 
 
 class EmployeeQuerySet(QuerySet):
+    """
+    Custom queryset for the Employee model to add reusable filtering logic.
+    """
     def active(self):
+        """
+        Filters employees with 'Active' status.
+        """
         return self.filter(status="Active")
 
 
 class EmployeeManager(Manager):
+    """
+    Custom manager for the Employee model to provide additional query methods.
+    """
     def aged_over_25(self):
+        """
+        Filters employees who are older than 25 years.
+        """
         return self.filter(age__gt=25)
-
-    def get_queryset(self):
-        return EmployeeQuerySet(self.model, using=self._db)
-
-    def active(self):
-        return self.get_queryset().active()
 
 
 class Department(models.Model):
+    """
+    Represents a department in the organization.
+    """
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -28,6 +37,9 @@ class Department(models.Model):
 
 
 class Contact(models.Model):
+    """
+    Stores contact details associated with an employee.
+    """
     employee = models.ForeignKey(
         "Employee", related_name="contacts", on_delete=models.CASCADE
     )
@@ -38,6 +50,9 @@ class Contact(models.Model):
 
 
 class Employee(models.Model):
+    """
+    Represents an employee in the organization, including their details and relationships.
+    """
     STATUS_CHOICES = [
         ("Active", "Active"),
         ("Inactive", "Inactive"),
@@ -62,6 +77,9 @@ class Employee(models.Model):
 
     @property
     def full_name(self):
+        """
+        Returns the full name of the employee by combining first and last names.
+        """
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
@@ -69,6 +87,9 @@ class Employee(models.Model):
 
 
 class Project(models.Model):
+    """
+    Represents a project in the organization.
+    """
     name = models.CharField(max_length=100)
     description = models.TextField()
 
@@ -77,6 +98,9 @@ class Project(models.Model):
 
 
 class ProjectAssignment(models.Model):
+    """
+    Links an employee to a project with a specific role.
+    """
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     role = models.CharField(max_length=100)
@@ -87,6 +111,15 @@ class ProjectAssignment(models.Model):
 
 @receiver(post_save, sender=Project)
 def add_high_role_members(sender, instance, created, **kwargs):
+    """
+    Signal handler that assigns 'Admin' employees to a newly created project.
+
+    Args:
+        sender (Model): The model class sending the signal.
+        instance (Project): The project instance being saved.
+        created (bool): Whether the project was created (True) or updated (False).
+        **kwargs: Additional keyword arguments.
+    """
     if created:
         highest_role = "Admin"
 
