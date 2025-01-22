@@ -2,6 +2,7 @@ from django.test import TestCase
 from decimal import Decimal
 from ..models import Department, Employee, Contact, Project, ProjectAssignment
 
+
 class EmployeeModelTest(TestCase):
     def setUp(self):
         self.department = Department.objects.create(name="Engineering")
@@ -139,4 +140,3 @@ class SignalTest(TestCase):
 
     def test_signal_auto_add_high_role_members(self):
         """Test that the signal correctly adds Admin employees to the project."""
-        

@@ -2,6 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Project, Employee, ProjectAssignment
 
+
 @receiver(post_save, sender=Project)
 def add_high_role_members(sender, instance, created, **kwargs):
     """

@@ -1,11 +1,13 @@
 from django.db import models
 from django.db.models import Manager, QuerySet
+from .base_model import BaseModel
 
 
 class EmployeeQuerySet(QuerySet):
     """
     Custom queryset for the Employee model to add reusable filtering logic.
     """
+
     def active(self) -> QuerySet["Employee"]:
         """
         Filters employees with status set to 'Active'.
@@ -20,6 +22,7 @@ class EmployeeManager(Manager):
     """
     Custom manager for the Employee model to provide additional query methods.
     """
+
     def aged_over_25(self) -> QuerySet["Employee"]:
         """
         Filters employees who are older than 25.
@@ -30,22 +33,30 @@ class EmployeeManager(Manager):
         return self.filter(age__gt=25)
 
 
-class Department(models.Model):
+class Department(BaseModel):
     """
     Represents a department in the organization.
     """
-    name = models.CharField(max_length=100, help_text="Name of the department.",)
+
+    name = models.CharField(
+        max_length=100,
+        help_text="Name of the department.",
+    )
 
     def __str__(self) -> str:
         return self.name
 
 
-class Contact(models.Model):
+class Contact(BaseModel):
     """
     Stores contact details associated with an employee.
     """
+
     employee = models.ForeignKey(
-        "Employee", related_name="contacts", on_delete=models.CASCADE,help_text="The employee associated with this contact.",
+        "Employee",
+        related_name="contacts",
+        on_delete=models.CASCADE,
+        help_text="The employee associated with this contact.",
     )
     address = models.TextField(help_text="The contact address of the employee.")
 
@@ -53,10 +64,20 @@ class Contact(models.Model):
         return f"Contact for {self.employee}"
 
 
-class Employee(models.Model):
+class Employee(BaseModel):
     """
-    Represents an employee in the organization, including their details and relationships.
+    Employee model to store employee details.
+
+    Attributes:
+        first_name (CharField): The first name of the employee.
+        last_name (CharField): The last name of the employee.
+        age (PositiveIntegerField): The age of the employee.
+        status (CharField): The employment status of the employee.
+        salary (DecimalField): The salary of the employee.
+        department (ForeignKey): The department where the employee works.
+        role (CharField): The role of the employee.
     """
+
     STATUS_CHOICES = [
         ("Active", "Active"),
         ("Inactive", "Inactive"),
@@ -67,14 +88,23 @@ class Employee(models.Model):
         ("Employee", "Employee"),
     ]
 
-    first_name = models.CharField(max_length=50, help_text="The first name of the employee.",)
-    last_name = models.CharField(max_length=50, help_text="The last name of the employee.")
+    first_name = models.CharField(
+        max_length=50, help_text="The first name of the employee."
+    )
+    last_name = models.CharField(
+        max_length=50, help_text="The last name of the employee."
+    )
     age = models.PositiveIntegerField(help_text="The age of the employee.")
     status = models.CharField(
-        max_length=10, choices=STATUS_CHOICES, help_text="The employment status of the employee."
+        max_length=10,
+        choices=STATUS_CHOICES,
+        help_text="The employment status of the employee.",
     )
     salary = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, help_text="The salary of the employee."
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        help_text="The salary of the employee.",
     )
     department = models.ForeignKey(
         Department,
@@ -84,7 +114,10 @@ class Employee(models.Model):
         help_text="The department where the employee works.",
     )
     role = models.CharField(
-        max_length=50, choices=ROLE_CHOICES, default="Employee", help_text="The role of the employee."
+        max_length=50,
+        choices=ROLE_CHOICES,
+        default="Employee",
+        help_text="The role of the employee.",
     )
 
     objects = EmployeeManager.from_queryset(EmployeeQuerySet)()
@@ -100,10 +133,11 @@ class Employee(models.Model):
         return self.full_name
 
 
-class Project(models.Model):
+class Project(BaseModel):
     """
     Represents a project in the organization.
     """
+
     name = models.CharField(max_length=100, help_text="The name of the project.")
     description = models.TextField(help_text="The description of the project.")
 
@@ -111,10 +145,11 @@ class Project(models.Model):
         return self.name
 
 
-class ProjectAssignment(models.Model):
+class ProjectAssignment(BaseModel):
     """
     Links an employee to a project with a specific role.
     """
+
     employee = models.ForeignKey(
         Employee,
         on_delete=models.CASCADE,
@@ -125,10 +160,9 @@ class ProjectAssignment(models.Model):
         on_delete=models.CASCADE,
         help_text="The project to which the employee is assigned.",
     )
-    role = models.CharField(max_length=100, help_text="The role of the employee in the project.")
+    role = models.CharField(
+        max_length=100, help_text="The role of the employee in the project."
+    )
 
     def __str__(self) -> str:
         return f"{self.employee.full_name} -> {self.project.name}"
-
-
-

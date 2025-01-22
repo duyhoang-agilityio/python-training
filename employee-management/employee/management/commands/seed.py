@@ -1,4 +1,4 @@
-#employee/management/commands/seed
+# employee/management/commands/seed
 from django.core.management.base import BaseCommand
 from employee.models import Department, Project, Employee
 
@@ -29,7 +29,7 @@ class Command(BaseCommand):
             Employee.objects.get_or_create(
                 first_name=f"First{i}",
                 last_name=f"Last{i}",
-                department=department, 
+                department=department,
                 age=20 + i,
                 status="Active" if i % 2 == 0 else "Inactive",
             )
