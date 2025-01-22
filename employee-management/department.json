@@ -1,34 +1,34 @@
 [
     {
-        "model": "core.department",
+        "model": "employee.department",
         "pk": 1,
         "fields": {
             "name": "Engineering"
         }
     },
     {
-        "model": "core.department",
+        "model": "employee.department",
         "pk": 2,
         "fields": {
             "name": "HR"
         }
     },
     {
-        "model": "core.department",
+        "model": "employee.department",
         "pk": 3,
         "fields": {
             "name": "Marketing"
         }
     },
     {
-        "model": "core.department",
+        "model": "employee.department",
         "pk": 4,
         "fields": {
             "name": "SEO"
         }
     },
     {
-        "model": "core.department",
+        "model": "employee.department",
         "pk": 5,
         "fields": {
             "name": "IT"

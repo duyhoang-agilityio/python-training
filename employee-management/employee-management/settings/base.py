@@ -1,4 +1,4 @@
-# employee/settings/base.py
+# employee-management/settings/base.py
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -12,7 +12,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core",
+    "employee",
 ]
 
 MIDDLEWARE = [
@@ -25,7 +25,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "employee.urls"
+ROOT_URLCONF = "employee-management.urls"
 
 TEMPLATES = [
     {
@@ -43,7 +43,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "employee.wsgi.application"
+WSGI_APPLICATION = "employee-management.wsgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
