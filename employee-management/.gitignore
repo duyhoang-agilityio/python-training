@@ -10,8 +10,10 @@ __pycache__/
 env/
 venv/
 ENV/
+.venv/
 env.bak/
 venv.bak/
+.pytest_cache/
 
 # Django stuff
 db.sqlite3
@@ -20,6 +22,7 @@ db.sqlite3
 *.pot
 *.pyc
 migrations/
+data/
 
 # Media and static files
 /media
@@ -65,3 +68,15 @@ nosetests.xml
 
 # Pyre
 .pyre/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
