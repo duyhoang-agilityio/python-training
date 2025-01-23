@@ -95,6 +95,11 @@ class Employee(BaseModel):
         max_length=50, help_text="The last name of the employee."
     )
     age = models.PositiveIntegerField(help_text="The age of the employee.")
+    email = models.CharField(
+        max_length=50,
+        help_text="The email of the employee.",
+        default="example@example.com",
+    )
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
