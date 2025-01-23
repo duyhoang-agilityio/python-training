@@ -42,6 +42,7 @@ class Department(BaseModel):
         max_length=100,
         help_text="Name of the department.",
     )
+    code = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name
