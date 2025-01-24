@@ -95,7 +95,7 @@ class Employee(BaseModel):
     last_name = models.CharField(
         max_length=50, help_text="The last name of the employee."
     )
-    age = models.PositiveIntegerField(help_text="The age of the employee.")
+    age = models.PositiveIntegerField(help_text="The age of the employee.", default=25)
     email = models.CharField(
         max_length=50,
         help_text="The email of the employee.",

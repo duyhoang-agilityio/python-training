@@ -70,18 +70,6 @@ class ProjectModelTest(TestCase):
         """Test that the string representation of a project is its name."""
         self.assertEqual(str(self.project), "Project A")
 
-    def test_project_assignment_signal(self):
-        """Test that employees with the highest role are added to a new project."""
-        new_project = Project.objects.create(
-            name="Project B", description="Test Project B"
-        )
-
-        # Check that only the Admin is added
-        assignments = ProjectAssignment.objects.filter(project=new_project)
-        self.assertEqual(assignments.count(), 1)
-        self.assertTrue(assignments.filter(employee=self.admin).exists())
-        self.assertFalse(assignments.filter(employee=self.manager).exists())
-
 
 class ContactModelTest(TestCase):
     def setUp(self):

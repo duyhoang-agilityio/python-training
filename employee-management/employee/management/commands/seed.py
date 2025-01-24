@@ -5,10 +5,6 @@ from employee.models import Department, Project, Employee
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        # Clear existing data to avoid duplicates
-        # Employee.objects.all().delete()
-        # Project.objects.all().delete()
-        # Department.objects.all().delete()
 
         # Create Departments
         departments = ["HR", "Engineering", "Marketing"]
