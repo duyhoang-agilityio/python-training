@@ -1,38 +1,10 @@
 from django.db import models
-from django.db.models import Manager, QuerySet
+from django.core.validators import MinValueValidator
 from .base_model import BaseModel
+from .constants import STATUS_CHOICES, ROLE_CHOICES, CONTACT_TYPE_CHOICES
 
 
-class EmployeeQuerySet(QuerySet):
-    """
-    Custom queryset for the Employee model to add reusable filtering logic.
-    """
-
-    def active(self) -> QuerySet["Employee"]:
-        """
-        Filters employees with status set to 'Active'.
-
-        Returns:
-            QuerySet: A queryset of active employees.
-        """
-        return self.filter(status="Active")
-
-
-class EmployeeManager(Manager):
-    """
-    Custom manager for the Employee model to provide additional query methods.
-    """
-
-    def aged_over_25(self) -> QuerySet["Employee"]:
-        """
-        Filters employees who are older than 25.
-
-        Returns:
-            QuerySet: A queryset of employees aged over 25.
-        """
-        return self.filter(age__gt=25)
-
-
+# ---------- Department ----------
 class Department(BaseModel):
     """
     Represents a department in the organization.
@@ -42,12 +14,23 @@ class Department(BaseModel):
         max_length=100,
         help_text="Name of the department.",
     )
-    code = models.CharField(max_length=10, null=True, blank=True)
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Description of the department.",
+    )
+    code = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+        help_text="Optional department code.",
+    )
 
     def __str__(self) -> str:
         return self.name
 
 
+# ---------- Contact ----------
 class Contact(BaseModel):
     """
     Stores contact details associated with an employee.
@@ -59,12 +42,25 @@ class Contact(BaseModel):
         on_delete=models.CASCADE,
         help_text="The employee associated with this contact.",
     )
-    address = models.TextField(help_text="The contact address of the employee.")
+    contact_type = models.CharField(
+        max_length=20,
+        choices=CONTACT_TYPE_CHOICES,
+        help_text="The type of contact (e.g., phone, email).",
+        null=True,
+        blank=True,
+    )
+    value = models.CharField(
+        max_length=255,
+        help_text="The contact value (phone number or email address).",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self) -> str:
-        return f"Contact for {self.employee}"
+        return f"{self.contact_type} for {self.employee}"
 
 
+# ---------- Employee ----------
 class Employee(BaseModel):
     """
     Employee model to store employee details.
@@ -73,21 +69,13 @@ class Employee(BaseModel):
         first_name (CharField): The first name of the employee.
         last_name (CharField): The last name of the employee.
         age (PositiveIntegerField): The age of the employee.
-        status (CharField): The employment status of the employee.
-        salary (DecimalField): The salary of the employee.
+        email (EmailField): The email of the employee.
+        birth_date (DateField): The birth date of the employee.
+        status (CharField): The employment status.
+        salary (DecimalField): The salary.
         department (ForeignKey): The department where the employee works.
         role (CharField): The role of the employee.
     """
-
-    STATUS_CHOICES = [
-        ("Active", "Active"),
-        ("Inactive", "Inactive"),
-    ]
-    ROLE_CHOICES = [
-        ("Admin", "Admin"),
-        ("Manager", "Manager"),
-        ("Employee", "Employee"),
-    ]
 
     first_name = models.CharField(
         max_length=50, help_text="The first name of the employee."
@@ -95,11 +83,18 @@ class Employee(BaseModel):
     last_name = models.CharField(
         max_length=50, help_text="The last name of the employee."
     )
-    age = models.PositiveIntegerField(help_text="The age of the employee.", default=25)
-    email = models.CharField(
+    age = models.PositiveIntegerField(
+        help_text="The age of the employee.",
+        default=25,
+        validators=[MinValueValidator(18)],
+    )
+    email = models.EmailField(
         max_length=50,
         help_text="The email of the employee.",
         default="example@example.com",
+    )
+    birth_date = models.DateField(
+        null=True, blank=True, help_text="The birth date of the employee."
     )
     status = models.CharField(
         max_length=10,
@@ -126,8 +121,6 @@ class Employee(BaseModel):
         help_text="The role of the employee.",
     )
 
-    objects = EmployeeManager.from_queryset(EmployeeQuerySet)()
-
     @property
     def full_name(self) -> str:
         """
@@ -139,6 +132,7 @@ class Employee(BaseModel):
         return self.full_name
 
 
+# ---------- Project ----------
 class Project(BaseModel):
     """
     Represents a project in the organization.
@@ -151,6 +145,7 @@ class Project(BaseModel):
         return self.name
 
 
+# ---------- ProjectAssignment ----------
 class ProjectAssignment(BaseModel):
     """
     Links an employee to a project with a specific role.
