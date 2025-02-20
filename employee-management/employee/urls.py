@@ -15,5 +15,5 @@ router.register("projects", ProjectViewSet, basename="project")
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("api-auth/", include("rest_framework.urls")),
+    path("api/v1/auth/", include("rest_framework.urls")),
 ]

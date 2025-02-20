@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import Department, Contact, Employee, Project, ProjectAssignment
 
+from django.contrib.auth.admin import UserAdmin
+from .models import User
+
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
@@ -26,6 +29,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "description")
 
 
+admin.site.register(User)
 admin.site.register(Department)
 admin.site.register(Contact)
 admin.site.register(ProjectAssignment)

@@ -6,6 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = "django-insecure-tj(jt7^oebk=_4y+vn!&^33a1o8l_2+w*u1x6*k0v9h@5fak*#"
 
 INSTALLED_APPS = [
+    "employee",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -15,7 +16,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
-    "employee",
     "drf_spectacular",
 ]
 
@@ -94,3 +94,5 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
     ],
 }
+
+AUTH_USER_MODEL = "employee.User"

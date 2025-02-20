@@ -1,7 +1,38 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from .base_model import BaseModel
 from .constants import STATUS_CHOICES, ROLE_CHOICES, CONTACT_TYPE_CHOICES
+
+
+# ---------- User ----------
+class User(AbstractUser):
+    """
+    User model extending Django's AbstractUser.
+
+    Attributes:
+        role (CharField): The role of the user (e.g., Employee, Manager, Admin).
+    """
+
+    role: str = models.CharField(
+        max_length=50,
+        choices=ROLE_CHOICES,
+        default="Employee",
+        help_text="The role of the user.",
+    )
+
+    def is_manager(self) -> bool:
+        return self.role == "Manager"
+
+    def is_admin(self) -> bool:
+        return self.role == "Admin"
+
+    @property
+    def custom_is_staff(self) -> bool:
+        return self.is_staff or self.role in ["Manager", "Admin"]
+
+    def __str__(self) -> str:
+        return f"{self.username} ({self.role})"
 
 
 # ---------- Department ----------

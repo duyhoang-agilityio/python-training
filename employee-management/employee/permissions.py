@@ -1,22 +1,19 @@
 from rest_framework import permissions
 
 
-class IsManager(permissions.BasePermission):
-    """
-    Only allow access if the user is a manager/admin (staff).
-    """
-
-    def has_permission(self, request, view):
-        return request.user and request.user.is_staff
-
-
 class IsManagerOrEmployeeItself(permissions.BasePermission):
     """
-    Allow managers full access; employees can only access their own record.
+    Allow managers and admins full access; employees can only access their own record.
     """
 
     def has_object_permission(self, request, view, obj):
-        if request.user and request.user.is_staff:
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+
+        # Use the custom role methods
+        if user.is_manager() or user.is_admin():
             return True
-        # For non-staff users, allow if employee email matches the user email.
-        return obj.email == request.user.email
+
+        # Regular employees can only access their own record.
+        return obj.email == user.email
