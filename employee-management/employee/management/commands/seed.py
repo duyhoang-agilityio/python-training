@@ -1,7 +1,8 @@
-from django.core.management.base import BaseCommand
-from employee.models import Department, Contact, Employee, Project, ProjectAssignment
-from faker import Faker
 import random
+from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
+from faker import Faker
+from employee.models import Department, Contact, Employee, Project, ProjectAssignment
 
 
 class Command(BaseCommand):
@@ -17,6 +18,7 @@ class Command(BaseCommand):
         Contact.objects.all().delete()
         Employee.objects.all().delete()
         Department.objects.all().delete()
+        User.objects.all().delete()  # Optionally clear users if needed
 
         # Create Departments
         departments = []
@@ -29,18 +31,27 @@ class Command(BaseCommand):
             departments.append(dept)
         self.stdout.write(f"Created {len(departments)} departments.")
 
-        # Create Employees
+        # Create Employees (and corresponding Django Users)
         status_choices = ["active", "inactive"]
         role_choices = ["Employee", "Manager", "Admin"]
         employees = []
         for _ in range(50):
             first_name = fake.first_name()
             last_name = fake.last_name()
+            email = fake.unique.email()
+            # Create a username from the email's local-part
+            username = email.split("@")[0]
+            # Create the Django user with a default password
+            user = User.objects.create_user(
+                username=username, email=email, password="password123"
+            )
+            # Create the Employee record, linking it to the user
             employee = Employee.objects.create(
+                user=user,
                 first_name=first_name,
                 last_name=last_name,
                 age=random.randint(20, 60),
-                email=fake.unique.email(),
+                email=email,
                 birth_date=fake.date_of_birth(minimum_age=20, maximum_age=60),
                 status=random.choice(status_choices),
                 salary=round(random.uniform(30000, 120000), 2),

@@ -1,38 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from .base_model import BaseModel
 from .constants import STATUS_CHOICES, ROLE_CHOICES, CONTACT_TYPE_CHOICES
-
-
-# ---------- User ----------
-class User(AbstractUser):
-    """
-    User model extending Django's AbstractUser.
-
-    Attributes:
-        role (CharField): The role of the user (e.g., Employee, Manager, Admin).
-    """
-
-    role: str = models.CharField(
-        max_length=50,
-        choices=ROLE_CHOICES,
-        default="Employee",
-        help_text="The role of the user.",
-    )
-
-    def is_manager(self) -> bool:
-        return self.role == "Manager"
-
-    def is_admin(self) -> bool:
-        return self.role == "Admin"
-
-    @property
-    def custom_is_staff(self) -> bool:
-        return self.is_staff or self.role in ["Manager", "Admin"]
-
-    def __str__(self) -> str:
-        return f"{self.username} ({self.role})"
 
 
 # ---------- Department ----------
@@ -108,6 +78,7 @@ class Employee(BaseModel):
         role (CharField): The role of the employee.
     """
 
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(
         max_length=50, help_text="The first name of the employee."
     )
@@ -151,6 +122,17 @@ class Employee(BaseModel):
         default="Employee",
         help_text="The role of the employee.",
     )
+
+    def is_manager_or_admin(user) -> bool:
+        """Return True if the user is either a manager or an admin."""
+        return hasattr(user, "employee") and user.employee.role.lower() in {
+            "manager",
+            "admin",
+        }
+
+    def is_employee(user) -> bool:
+        """Check if user has employee role"""
+        return hasattr(user, "employee") and user.employee.role.lower() == "employee"
 
     @property
     def full_name(self) -> str:

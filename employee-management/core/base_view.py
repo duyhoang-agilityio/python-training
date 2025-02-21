@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from ..permissions import IsManagerOrEmployeeItself
+from employee.permissions import IsManagerOrAdmin
 
 
 class BaseViewSet(viewsets.ModelViewSet):
@@ -18,7 +18,7 @@ class BaseViewSet(viewsets.ModelViewSet):
             permission_classes = getattr(
                 self,
                 "write_permission_classes",
-                [IsAuthenticated, IsManagerOrEmployeeItself],
+                [IsAuthenticated, IsManagerOrAdmin],
             )
         else:
             permission_classes = getattr(

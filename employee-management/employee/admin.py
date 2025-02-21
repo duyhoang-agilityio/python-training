@@ -14,7 +14,7 @@ class EmployeeAdmin(admin.ModelAdmin):
     Filters employees by department and status.
     """
 
-    list_display = ("full_name", "age", "status", "department")
+    list_display = ("full_name", "age", "status", "department", "role", "user")
     search_fields = ("first_name", "last_name")
     list_filter = ("department", "status")
 
@@ -29,7 +29,6 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ("name", "description")
 
 
-admin.site.register(User)
 admin.site.register(Department)
 admin.site.register(Contact)
 admin.site.register(ProjectAssignment)
