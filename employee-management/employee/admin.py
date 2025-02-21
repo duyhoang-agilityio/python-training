@@ -11,7 +11,7 @@ class EmployeeAdmin(admin.ModelAdmin):
     Filters employees by department and status.
     """
 
-    list_display = ("full_name", "age", "status", "department")
+    list_display = ("full_name", "age", "status", "department", "role")
     search_fields = ("first_name", "last_name")
     list_filter = ("department", "status")
 
