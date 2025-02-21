@@ -26,11 +26,14 @@ class EmployeeViewSet(BaseViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        # If the user is not authenticated, return an empty queryset
+        if not user.is_authenticated:
+            return Employee.objects.none()
         # If the user is a manager or admin, they can see all employees.
-        if Employee.is_manager_or_admin(user):
+        if user.is_manager_or_admin():
             return Employee.objects.all()
         # Otherwise, if the user is an employee, return only their record.
-        if Employee.is_employee(user):
+        if user.is_employee():
             return Employee.objects.filter(user=user)
         # Optionally, for any other case, return an empty queryset:
         return Employee.objects.none()
@@ -42,7 +45,7 @@ class ContactViewSet(BaseViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if Employee.is_manager_or_admin(user):
+        if user.is_manager_or_admin():
             return Contact.objects.all()
 
         return Contact.objects.filter(employee__user=user)
@@ -54,7 +57,7 @@ class DepartmentViewSet(BaseViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if Employee.is_manager_or_admin(user):
+        if user.is_manager_or_admin():
             return Department.objects.all()
 
         return Department.objects.filter(employees__user=user).distinct()
@@ -82,7 +85,7 @@ class ProjectViewSet(BaseViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if Employee.is_manager_or_admin(user):
+        if user.is_manager_or_admin():
             return Project.objects.all()
 
         return Project.objects.filter(

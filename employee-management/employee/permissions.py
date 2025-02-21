@@ -1,12 +1,11 @@
 from rest_framework import permissions
-from .models import Employee
 
 
 class IsManagerOrAdmin(permissions.BasePermission):
     """Global permission check for manager or admin role"""
 
     def has_permission(self, request, view):
-        return request.user.is_superuser or Employee.is_manager_or_admin(request.user)
+        return request.user.is_superuser or request.user.is_manager_or_admin()
 
 
 class IsEmployeeOwner(permissions.BasePermission):
@@ -14,7 +13,7 @@ class IsEmployeeOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Employee can only access their own records
-        return obj.user == request.user and Employee.is_employee(request.user)
+        return obj.user == request.user and request.user.is_employee()
 
 
 class EmployeeAccessPermission(permissions.BasePermission):
@@ -22,10 +21,10 @@ class EmployeeAccessPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if view.action in ["create", "update", "destroy"]:
-            return Employee.is_manager_or_admin(request.user)
+            return request.user.is_manager_or_admin()
         return True
 
     def has_object_permission(self, request, view, obj):
-        if Employee.is_manager_or_admin(request.user):
+        if request.user.is_manager_or_admin():
             return True
-        return obj.user == request.user and Employee.is_employee(request.user)
+        return obj.user == request.user and request.user.is_employee()

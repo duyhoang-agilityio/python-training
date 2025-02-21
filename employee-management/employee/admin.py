@@ -1,9 +1,6 @@
 from django.contrib import admin
 from .models import Department, Contact, Employee, Project, ProjectAssignment
 
-from django.contrib.auth.admin import UserAdmin
-from .models import User
-
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
@@ -14,7 +11,7 @@ class EmployeeAdmin(admin.ModelAdmin):
     Filters employees by department and status.
     """
 
-    list_display = ("full_name", "age", "status", "department", "role", "user")
+    list_display = ("full_name", "age", "status", "department", "role")
     search_fields = ("first_name", "last_name")
     list_filter = ("department", "status")
 
