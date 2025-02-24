@@ -11,6 +11,14 @@ from .serializers import (
 from .permissions import EmployeeAccessPermission
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+
+
+def get_queryset(self):
+    user = self.request.user
+    if not user.is_authenticated:
+        raise PermissionDenied("You must be authenticated.")
+    return Employee.objects.all()
 
 
 class EmployeeViewSet(BaseViewSet):
@@ -26,15 +34,16 @@ class EmployeeViewSet(BaseViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        qs = Employee.objects.all().order_by("id")
         # If the user is not authenticated, return an empty queryset
         if not user.is_authenticated:
-            return Employee.objects.none()
+            raise PermissionDenied("You must be authenticated.")
         # If the user is a manager or admin, they can see all employees.
         if user.is_manager_or_admin():
-            return Employee.objects.all()
+            return qs
         # Otherwise, if the user is an employee, return only their record.
         if user.is_employee():
-            return Employee.objects.filter(user=user)
+            return qs.filter(user=user)
         # Optionally, for any other case, return an empty queryset:
         return Employee.objects.none()
 

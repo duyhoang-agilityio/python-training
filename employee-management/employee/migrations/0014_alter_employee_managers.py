@@ -5,7 +5,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("employee", "0013_employee_groups_employee_is_superuser_and_more"),
     ]
