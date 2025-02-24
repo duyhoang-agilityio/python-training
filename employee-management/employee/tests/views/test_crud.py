@@ -1,49 +1,106 @@
-import pytest
-from django.urls import reverse
-from rest_framework import status
+from employee.models import Department, Contact, Employee, Project
+from .base_test import BaseCRUDTest
 
 
-@pytest.mark.django_db
-def test_create_department(api_client, admin_user):
-    api_client.force_authenticate(user=admin_user)
-    payload = {
+class DepartmentCRUDTest(BaseCRUDTest):
+    model = Department
+    url_basename = "department"
+    create_data = {
         "name": "HR Department",
         "description": "Handles human resources.",
         "code": "HR01",
     }
-    url = reverse("department-list")
-    response = api_client.post(url, payload)
-    assert response.status_code == status.HTTP_201_CREATED
-    assert response.data["name"] == payload["name"]
+    update_data = {"name": "Updated HR Department"}
+
+    def setUp(self):
+        super().setUp()
+        # Create an admin user for authentication.
+        admin_dept = Department.objects.create(
+            name="Admin Department", description="Admin Dept", code="ADM"
+        )
+        self.admin_user = Employee.objects.create_superuser(
+            email="admin@example.com",
+            password="password123",
+            first_name="Admin",
+            last_name="User",
+            age=30,
+            status="Active",
+            department=admin_dept,
+            role="admin",
+        )
+        self.client.force_authenticate(user=self.admin_user)
 
 
-@pytest.mark.django_db
-def test_update_employee(api_client, admin_user, sample_employee):
-    api_client.force_authenticate(user=admin_user)
-    payload = {"first_name": "UpdatedName"}
-    url = reverse("employee-detail", args=[sample_employee.id])
-    response = api_client.patch(url, payload)
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data["first_name"] == "UpdatedName"
+class ContactCRUDTest(BaseCRUDTest):
+    model = Contact
+    url_basename = "contact"
+
+    def setUp(self):
+        super().setUp()
+        # Create an admin user for authentication.
+        admin_dept = Department.objects.create(
+            name="Admin Dept", description="Admin Dept", code="ADM"
+        )
+        self.admin_user = Employee.objects.create_superuser(
+            email="admin_contact@example.com",
+            password="password123",
+            first_name="Admin",
+            last_name="User",
+            age=30,
+            status="Active",
+            department=admin_dept,
+            role="admin",
+        )
+        self.client.force_authenticate(user=self.admin_user)
+        # Create a related employee for the contact.
+        self.contact_employee = Employee.objects.create_user(
+            email="contactuser@example.com",
+            password="password123",
+            first_name="Contact",
+            last_name="User",
+            age=28,
+            status="Active",
+            department=admin_dept,
+            role="employee",
+        )
+
+    @property
+    def create_data(self):
+        # Pass the employee instance (not just the ID) when creating a model instance.
+        return {
+            "employee": self.contact_employee,
+            "contact_type": "email",
+            "value": "contact@example.com",
+        }
+
+    @property
+    def update_data(self):
+        return {"value": "updated_contact@example.com"}
 
 
-@pytest.mark.django_db
-def test_create_contact(api_client, admin_user, sample_employee):
-    api_client.force_authenticate(user=admin_user)
-    payload = {
-        "employee": sample_employee.id,
-        "contact_type": "email",
-        "value": "contact@example.com",
+class ProjectCRUDTest(BaseCRUDTest):
+    model = Project
+    url_basename = "project"
+    create_data = {"name": "Test Project", "description": "This is a test project."}
+    update_data = {
+        "name": "Updated Test Project",
+        "description": "This is an updated description.",
     }
-    url = reverse("contact-list")
-    response = api_client.post(url, payload)
-    assert response.status_code == status.HTTP_201_CREATED
-    assert response.data["value"] == "contact@example.com"
 
-
-@pytest.mark.django_db
-def test_delete_project(api_client, admin_user, sample_project):
-    api_client.force_authenticate(user=admin_user)
-    url = reverse("project-detail", args=[sample_project.id])
-    response = api_client.delete(url)
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    def setUp(self):
+        super().setUp()
+        # Create an admin user for authentication.
+        admin_dept = Department.objects.create(
+            name="Admin Dept", description="Admin Dept", code="ADM"
+        )
+        self.admin_user = Employee.objects.create_superuser(
+            email="admin_project@example.com",
+            password="password123",
+            first_name="Admin",
+            last_name="User",
+            age=30,
+            status="Active",
+            department=admin_dept,
+            role="admin",
+        )
+        self.client.force_authenticate(user=self.admin_user)
