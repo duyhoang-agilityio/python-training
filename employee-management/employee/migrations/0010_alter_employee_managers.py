@@ -5,7 +5,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("employee", "0009_remove_employee_created_at_and_more"),
     ]

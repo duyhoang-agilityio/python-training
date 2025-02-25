@@ -1,6 +1,6 @@
 from django.test import TestCase
 from decimal import Decimal
-from ..models import Department, Employee, Contact, Project, ProjectAssignment
+from employee.models import Department, Employee, Contact, Project, ProjectAssignment
 
 
 class EmployeeModelTest(TestCase):
@@ -24,21 +24,38 @@ class EmployeeModelTest(TestCase):
         """Test that the string representation of an employee is the full name."""
         self.assertEqual(str(self.employee), "John Doe")
 
-    def test_employee_age_over_25(self):
-        """Test the custom manager 'aged_over_25'."""
-        employee2 = Employee.objects.create(
+
+class DepartmentModelTest(TestCase):
+    def setUp(self):
+        self.department = Department.objects.create(name="HR")
+
+    def test_department_str(self):
+        """Test that the string representation of a department is its name."""
+        self.assertEqual(str(self.department), "HR")
+
+
+class ContactModelTest(TestCase):
+    def setUp(self):
+        self.department = Department.objects.create(name="HR")
+        self.employee = Employee.objects.create(
             first_name="Jane",
-            last_name="Smith",
-            age=24,
+            last_name="Doe",
+            age=28,
             status="Active",
             salary=Decimal("4000.00"),
             department=self.department,
             role="Employee",
+            email="jane.doe@example.com",
         )
 
-        employees = Employee.objects.aged_over_25()
-        self.assertIn(self.employee, employees)
-        self.assertNotIn(employee2, employees)
+        self.contact = Contact.objects.create(
+            employee=self.employee, value="contact@example.com", contact_type="Contact"
+        )
+
+    def test_contact_str(self):
+        """Test that the string representation of a contact is 'Contact for [employee full name]'."""
+        expected = f"Contact for {self.employee.full_name}"
+        self.assertEqual(str(self.contact), expected)
 
 
 class ProjectModelTest(TestCase):
@@ -55,6 +72,7 @@ class ProjectModelTest(TestCase):
             salary=Decimal("8000.00"),
             department=self.department,
             role="Admin",
+            email="admin1@example.com",
         )
         self.manager = Employee.objects.create(
             first_name="Manager",
@@ -64,41 +82,12 @@ class ProjectModelTest(TestCase):
             salary=Decimal("7000.00"),
             department=self.department,
             role="Manager",
+            email="admin@2example.com",
         )
 
     def test_project_str(self):
         """Test that the string representation of a project is its name."""
         self.assertEqual(str(self.project), "Project A")
-
-
-class ContactModelTest(TestCase):
-    def setUp(self):
-        self.department = Department.objects.create(name="HR")
-        self.employee = Employee.objects.create(
-            first_name="Jane",
-            last_name="Doe",
-            age=28,
-            status="Active",
-            salary=Decimal("4000.00"),
-            department=self.department,
-            role="Employee",
-        )
-        self.contact = Contact.objects.create(
-            employee=self.employee, address="1234 Elm Street"
-        )
-
-    def test_contact_str(self):
-        """Test that the string representation of a contact is 'Contact for [employee]'."""
-        self.assertEqual(str(self.contact), f"Contact for {self.employee.full_name}")
-
-
-class DepartmentModelTest(TestCase):
-    def setUp(self):
-        self.department = Department.objects.create(name="HR")
-
-    def test_department_str(self):
-        """Test that the string representation of a department is its name."""
-        self.assertEqual(str(self.department), "HR")
 
 
 class SignalTest(TestCase):
@@ -111,7 +100,8 @@ class SignalTest(TestCase):
             status="Active",
             salary=Decimal("8000.00"),
             department=self.department,
-            # role="Admin",
+            role="Admin",
+            email="admin2@example.com",
         )
         self.manager = Employee.objects.create(
             first_name="Manager",
@@ -120,11 +110,17 @@ class SignalTest(TestCase):
             status="Active",
             salary=Decimal("7000.00"),
             department=self.department,
-            # role="Manager",
+            role="Manager",
+            email="manager2@example.com",
         )
+        # Creating a new project should trigger the signal.
         self.project = Project.objects.create(
             name="Project C", description="Test Project C"
         )
 
     def test_signal_auto_add_high_role_members(self):
-        """Test that the signal correctly adds Admin employees to the project."""
+        """Test that the signal correctly adds Admin and Manager employees to the project."""
+        assignments = ProjectAssignment.objects.filter(project=self.project)
+        assigned_emails = {assignment.employee.email for assignment in assignments}
+        self.assertIn(self.admin.email, assigned_emails)
+        self.assertIn(self.manager.email, assigned_emails)

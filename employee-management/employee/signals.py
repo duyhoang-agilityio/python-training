@@ -15,15 +15,13 @@ def add_high_role_members(sender, instance, created, **kwargs):
         **kwargs: Additional keyword arguments.
     """
     if created:
-        highest_role = "Admin"
-
         # Get active employees with the highest role
         high_role_employees = Employee.objects.filter(
-            status="Active", role=highest_role
-        )
+            role__iexact="admin"
+        ) | Employee.objects.filter(role__iexact="manager")
 
         # Add these employees to the project
         for employee in high_role_employees:
             ProjectAssignment.objects.create(
-                employee=employee, project=instance, role=highest_role
+                employee=employee, project=instance, role="Auto-assigned"
             )

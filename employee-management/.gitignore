@@ -38,7 +38,7 @@ prod_db
 
 # IDE specific
 .idea/
-.vscode/
+# .vscode/
 *.swp
 *.swo
 *.DS_Store
@@ -61,6 +61,7 @@ celerybeat-schedule
 # Testing
 coverage/
 nosetests.xml
+.coverage
 *.cover
 .hypothesis/
 

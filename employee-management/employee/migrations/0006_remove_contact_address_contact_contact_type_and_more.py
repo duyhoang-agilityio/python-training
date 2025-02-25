@@ -5,49 +5,76 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('employee', '0005_alter_employee_age'),
+        ("employee", "0005_alter_employee_age"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='contact',
-            name='address',
+            model_name="contact",
+            name="address",
         ),
         migrations.AddField(
-            model_name='contact',
-            name='contact_type',
-            field=models.CharField(blank=True, choices=[('phone', 'Phone'), ('email', 'Email')], help_text='The type of contact (e.g., phone, email).', max_length=20, null=True),
+            model_name="contact",
+            name="contact_type",
+            field=models.CharField(
+                blank=True,
+                choices=[("phone", "Phone"), ("email", "Email")],
+                help_text="The type of contact (e.g., phone, email).",
+                max_length=20,
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='contact',
-            name='value',
-            field=models.CharField(blank=True, help_text='The contact value (phone number or email address).', max_length=255, null=True),
+            model_name="contact",
+            name="value",
+            field=models.CharField(
+                blank=True,
+                help_text="The contact value (phone number or email address).",
+                max_length=255,
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='department',
-            name='description',
-            field=models.TextField(blank=True, help_text='Description of the department.', null=True),
+            model_name="department",
+            name="description",
+            field=models.TextField(
+                blank=True, help_text="Description of the department.", null=True
+            ),
         ),
         migrations.AddField(
-            model_name='employee',
-            name='birth_date',
-            field=models.DateField(blank=True, help_text='The birth date of the employee.', null=True),
+            model_name="employee",
+            name="birth_date",
+            field=models.DateField(
+                blank=True, help_text="The birth date of the employee.", null=True
+            ),
         ),
         migrations.AlterField(
-            model_name='department',
-            name='code',
-            field=models.CharField(blank=True, help_text='Optional department code.', max_length=10, null=True),
+            model_name="department",
+            name="code",
+            field=models.CharField(
+                blank=True,
+                help_text="Optional department code.",
+                max_length=10,
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='employee',
-            name='age',
-            field=models.PositiveIntegerField(default=25, help_text='The age of the employee.', validators=[django.core.validators.MinValueValidator(18)]),
+            model_name="employee",
+            name="age",
+            field=models.PositiveIntegerField(
+                default=25,
+                help_text="The age of the employee.",
+                validators=[django.core.validators.MinValueValidator(18)],
+            ),
         ),
         migrations.AlterField(
-            model_name='employee',
-            name='email',
-            field=models.EmailField(default='example@example.com', help_text='The email of the employee.', max_length=50),
+            model_name="employee",
+            name="email",
+            field=models.EmailField(
+                default="example@example.com",
+                help_text="The email of the employee.",
+                max_length=50,
+            ),
         ),
     ]
