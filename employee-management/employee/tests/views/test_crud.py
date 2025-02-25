@@ -1,5 +1,5 @@
 from employee.models import Department, Contact, Employee, Project
-from base_CRUD_test import BaseCRUDTest
+from employee.tests.base_CRUD_test import BaseCRUDTest
 
 
 class DepartmentCRUDTest(BaseCRUDTest):
