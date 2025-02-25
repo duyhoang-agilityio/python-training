@@ -71,7 +71,7 @@ class DepartmentViewSet(BaseViewSet):
 
         return Department.objects.filter(employees__user=user).distinct()
 
-    @action(detail=True, methods=["post"], url_path="add-employees")
+    @action(detail=True, methods=["post"], url_path="employees")
     def add_employees(self, request, pk=None):
         department = self.get_object()
         employee_ids = request.data.get("employee_ids", [])
@@ -101,7 +101,7 @@ class ProjectViewSet(BaseViewSet):
             projectassignment__employee__email=user.email
         ).distinct()
 
-    @action(detail=True, methods=["post"], url_path="assign-employees")
+    @action(detail=True, methods=["post"], url_path="employees")
     def assign_employees(self, request, pk=None):
         project = self.get_object()
         assignments = request.data.get("assignments", [])
