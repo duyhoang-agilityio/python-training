@@ -1,27 +1,73 @@
-import pytest
-from django.urls import reverse
-from rest_framework import status
-from employee.models import Employee, Department, Project
+from employee.models import Department, Employee
+from tests.base_crud_test import BaseCRUDTest
+from tests.base_searching_test import BaseSearchingTest
+from tests.base_pagination_test import BasePaginationTest
 
+class DepartmentOrderingTest(BaseOrderingTest):
+    url_basename = "department"
+    ordering_field = "first_name"
 
-@pytest.mark.django_db
-def test_ordering_employees(api_client, admin_user, create_employees):
-    api_client.force_authenticate(user=admin_user)
-    url = reverse("employee-list") + "?ordering=first_name"
-    response = api_client.get(url)
-    assert response.status_code == status.HTTP_200_OK
-    names = [emp["first_name"] for emp in response.data["results"]]
-    assert names == sorted(names)
+    def setUp(self):
+        super().setUp()
+        # Authenticate the client.
+        admin_dept = Department.objects.create(name="Admin Dept", description="Admin Dept", code="ADM")
+        admin_user = Employee.objects.create_superuser(
+            email="admin2@example.com",
+            password="password123",
+            first_name="Admin",
+            last_name="User",
+            age=30,
+            status="Active",
+            department=admin_dept,
+            role="admin",
+        )
+        self.client.force_authenticate(user=admin_user)
 
+class DepartmentSearchingTest(BaseSearchingTest):
+    url_basename = "department"
+    search_query = "HR"
+    search_field = "name"
 
-@pytest.mark.django_db
-def test_search_employee(api_client, admin_user, create_employees):
-    api_client.force_authenticate(user=admin_user)
-    url = reverse("employee-list") + "?search=Alice"
-    response = api_client.get(url)
-    assert response.status_code == status.HTTP_200_OK
-    results = response.data["results"]
-    # Ensure that at least one result contains "Alice" in first_name or last_name.
-    assert any(
-        "Alice" in emp["first_name"] or "Alice" in emp["last_name"] for emp in results
-    )
+    def setUp(self):
+        super().setUp()
+        admin_dept = Department.objects.create(name="Admin Dept", description="Admin Dept", code="ADM")
+        admin_user = Employee.objects.create_superuser(
+            email="admin3@example.com",
+            password="password123",
+            first_name="Admin",
+            last_name="User",
+            age=30,
+            status="Active",
+            department=admin_dept,
+            role="admin",
+        )
+        # Create a couple of departments
+        Department.objects.create(name="HR Department", description="Handles HR", code="HR01")
+        Department.objects.create(name="Finance Department", description="Handles finance", code="FIN")
+        self.client.force_authenticate(user=admin_user)
+
+class DepartmentPaginationTest(BasePaginationTest):
+    url_basename = "department"
+    page_size = 10
+
+    def setUp(self):
+        super().setUp()        
+        admin_dept = Department.objects.create(name="Admin Dept", description="Admin Dept", code="ADM")
+        admin_user = Employee.objects.create_superuser(
+            email="admin4@example.com",
+            password="password123",
+            first_name="Admin",
+            last_name="User",
+            age=30,
+            status="Active",
+            department=admin_dept,
+            role="admin",
+        )
+        # Create several departments for pagination.
+        for i in range(15):
+            Department.objects.create(
+                name=f"Department {i}",
+                description="Test department",
+                code=f"DPT{i}"
+            )
+        self.client.force_authenticate(user=admin_user)
