@@ -38,7 +38,7 @@ prod_db
 
 # IDE specific
 .idea/
-.vscode/
+# .vscode/
 *.swp
 *.swo
 *.DS_Store
@@ -59,9 +59,9 @@ var/
 celerybeat-schedule
 
 # Testing
-coverage/
+# coverage/
 nosetests.xml
-.coverage
+# .coverage
 *.cover
 .hypothesis/
 
@@ -76,10 +76,10 @@ nosetests.xml
 htmlcov/
 .tox/
 .nox/
-.coverage
-.coverage.*
+# .coverage
+# .coverage.*
 .cache
 nosetests.xml
 coverage.xml
-*.cover
+# *.cover
 .hypothesis/
