@@ -147,7 +147,6 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         help_text="The role of the employee.",
     )
 
-    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = EmployeeManager()

@@ -7,6 +7,7 @@ SECRET_KEY = "django-insecure-tj(jt7^oebk=_4y+vn!&^33a1o8l_2+w*u1x6*k0v9h@5fak*#
 
 INSTALLED_APPS = [
     "employee",
+    "rest_framework.authtoken",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -14,7 +15,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework.authtoken",
     "django_filters",
     "drf_spectacular",
 ]
@@ -47,7 +47,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "employee-management.wsgi.application"
+WSGI_APPLICATION = "employee-management.wsgi.app"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
